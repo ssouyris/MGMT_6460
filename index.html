@@ -112,6 +112,10 @@ ul.task-list li input[type="checkbox"] {
   }
   *, *::before, *::after { box-sizing: border-box; }
   body {
+    /* A full-height column so the footer sits at the bottom of the window
+       when the lecture list is short, and after the list when it is long.
+       `main` takes the spare height; the footer is a sibling of it. */
+    display: flex; flex-direction: column; min-height: 100vh;
     margin: 0;
     background: var(--paper);
     color: var(--ink);
@@ -130,8 +134,24 @@ ul.task-list li input[type="checkbox"] {
     margin: 0; font-size: 2.1rem; font-weight: 600; letter-spacing: 0.01em;
   }
   .rpi-banner p { margin: 8px 0 0; font-size: 1.05rem; opacity: 0.85; }
+  /* The default link blue is unreadable on the deck blue. Keep the
+     banner's own colour and mark the links with a thin offset underline
+     that turns solid on hover. */
+  .rpi-banner a {
+    color: inherit; text-decoration: underline;
+    text-decoration-color: rgba(250, 250, 250, 0.45);
+    text-decoration-thickness: 1px; text-underline-offset: 3px;
+  }
+  .rpi-banner a:hover, .rpi-banner a:focus {
+    text-decoration-color: currentColor; outline: none;
+  }
 
-  main { max-width: 860px; margin: 0 auto; padding: 40px 24px 80px; }
+  /* `width: 100%` because auto side margins on a flex item switch off
+     stretching, and without it main would shrink to its content. */
+  main {
+    flex: 1 0 auto; width: 100%; max-width: 860px;
+    margin: 0 auto; padding: 40px 24px 52px;
+  }
   main h2 {
     font-size: 1.05rem; font-weight: 600; color: var(--deckblue);
     text-transform: uppercase; letter-spacing: 0.08em;
@@ -162,9 +182,13 @@ ul.task-list li input[type="checkbox"] {
     font-size: 0.85em; background: var(--tint); border: 1px solid var(--gray);
     border-radius: 3px; padding: 1px 5px;
   }
+  /* Outside main, so it sets its own width: main's column less main's
+     24px side padding, which keeps the rule the same length as the ones
+     under the headings. */
   footer.rpi-foot {
-    border-top: 1px solid var(--gray); margin-top: 52px; padding-top: 16px;
-    font-size: 0.88rem; color: var(--muted);
+    width: calc(100% - 48px); max-width: 812px; margin: 0 auto;
+    border-top: 1px solid var(--gray); padding: 16px 0 24px;
+    font-size: 0.88rem; color: var(--muted); text-align: right;
   }
   /* Without this the one link in the footer renders in the browser's
      default link blue with a full underline, which is the loudest thing
@@ -183,7 +207,7 @@ ul.task-list li input[type="checkbox"] {
 
 <div class="rpi-banner">
   <h1>MGMT 6460</h1>
-  <p>Modeling and Optimization · Fall 2026 · Sebastian Souyris, RPI Lally School of Management</p>
+  <p>Modeling and Optimization · Fall 2026 · <a href="https://ssouyris.com/teaching.html">Sebastian Souyris</a>, <a href="https://lally.rpi.edu/">RPI Lally School of Management</a></p>
 </div>
 
 <main>
@@ -203,11 +227,11 @@ ul.task-list li input[type="checkbox"] {
   </a></li>
 </ul>
 
+</main>
+
 <footer class="rpi-foot">
   Built with <a href="https://quarto.org/">Quarto</a>.
 </footer>
-
-</main>
 
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
