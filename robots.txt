@@ -1,0 +1,12 @@
+# Course slides. Please do not index.
+#
+# NOTE: this file has no effect where it sits. robots.txt is read only
+# from the ORIGIN root, and this is a GitHub project page under a path
+# prefix, so crawlers fetch <user>.github.io/robots.txt instead. The
+# working control is <meta name="robots" content="noindex, nofollow,
+# noarchive"> in the head of every page here.
+#
+# Nothing in this file restricts access. Anyone with the URL can read
+# these pages, which is the point of publishing them for a class.
+User-agent: *
+Disallow: /
