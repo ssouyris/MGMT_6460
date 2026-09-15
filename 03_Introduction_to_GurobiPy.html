@@ -669,7 +669,7 @@ Sebastian Souyris
 
   <p class="date">MGMT 6460 Fall 2026</p>
 </section>
-<section id="from-spreadsheet-to-code" class="slide level2">
+<section id="from-spreadsheet-to-code" class="slide level2 smaller">
 <h2>From Spreadsheet to Code</h2>
 <div class="hidden">
 <p><span class="math display">\[
@@ -743,11 +743,78 @@ Sebastian Souyris
 </div></div>
 <p><strong>Teaching resources</strong></p>
 <ul>
+<li><a href="https://colab.research.google.com/drive/1XWQTKV32nmnk29huDuMmS5pAs6cSVIHG">python_basics.ipynb</a>: the Python the course notebooks use, for students new to it</li>
 <li><a href="https://www.gurobi.com/">gurobi.com</a>: documentation and free <a href="https://www.gurobi.com/academia/academic-program-and-licenses/">academic licenses</a></li>
 <li><a href="https://github.com/Gurobi">github.com/Gurobi</a>: open source repositories, among them <strong>modeling-examples</strong>, the template for our notebooks</li>
 <li><a href="https://www.gurobi.com/resources/demos?demo-type=Jupyter+Notebook+Demo">Jupyter notebook demos</a>: scheduling, portfolios, pricing, airline recovery</li>
 </ul>
 <p><code>pip install gurobipy</code> includes a license for models up to 2,000 variables and 2,000 constraints, enough for this course.</p>
+</section>
+<section id="modeling-languages-and-solvers" class="slide level2 smaller">
+<h2>Modeling Languages and Solvers</h2>
+<div class="columns">
+<div class="column" style="width:48%;">
+<div title="Algebraic modeling languages">
+<div class="callout callout-note no-icon callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<p><strong>Algebraic modeling languages</strong></p>
+</div>
+<div class="callout-content">
+<p><strong>Commercial</strong></p>
+<ul>
+<li><img data-src="assets/logos/ampl.png" style="height:1.4em; margin:0 0.3em 0 0; vertical-align:middle;"><a href="https://ampl.com">AMPL</a></li>
+<li><img data-src="assets/logos/gams.png" style="height:1.4em; margin:0 0.3em 0 0; vertical-align:middle;"><a href="https://www.gams.com">GAMS</a></li>
+<li><a href="https://www.aimms.com">AIMMS</a>, <a href="https://www.lindo.com">LINGO</a>, <a href="https://www.maximalsoftware.com">MPL</a>, <a href="https://www.ibm.com/products/ilog-cplex-optimization-studio">OPL</a>, <a href="https://pypi.org/project/gurobipy/">gurobipy</a></li>
+</ul>
+<p><strong>Open source</strong></p>
+<ul>
+<li><img data-src="assets/logos/pyomo.png" style="height:1.4em; margin:0 0.3em 0 0; vertical-align:middle;"><a href="https://www.pyomo.org">Pyomo</a> (Python)</li>
+<li><img data-src="assets/logos/jump.png" style="height:1.4em; margin:0 0.3em 0 0; vertical-align:middle;"><a href="https://jump.dev">JuMP</a> (Julia)</li>
+<li><a href="https://coin-or.github.io/pulp/">PuLP</a>, <a href="https://www.cvxpy.org">CVXPY</a>, <a href="https://github.com/PyPSA/linopy">linopy</a>, <a href="https://zimpl.zib.de">ZIMPL</a>, <a href="https://www.minizinc.org">MiniZinc</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:48%;">
+<div title="Solvers">
+<div class="callout callout-note no-icon callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<p><strong>Solvers</strong></p>
+</div>
+<div class="callout-content">
+<p><strong>Commercial</strong></p>
+<ul>
+<li><img data-src="assets/logos/gurobi.png" style="height:1.4em; margin:0 0.3em 0 0; vertical-align:middle;"><a href="https://www.gurobi.com">Gurobi</a></li>
+<li><a href="https://www.ibm.com/products/ilog-cplex-optimization-studio">IBM CPLEX</a></li>
+<li><a href="https://www.fico.com/en/products/fico-xpress-optimization">FICO Xpress</a>, <a href="https://www.mosek.com">MOSEK</a>, <a href="https://www.shanshu.ai/copt">COPT</a>, <a href="https://www.artelys.com/solvers/knitro/">Knitro</a>, <a href="https://minlp.com/baron-solver">BARON</a>, <a href="https://www.hexaly.com">Hexaly</a></li>
+</ul>
+<p><strong>Open source</strong></p>
+<ul>
+<li><img data-src="assets/logos/highs.png" style="height:1.4em; margin:0 0.3em 0 0; vertical-align:middle;"><a href="https://highs.dev">HiGHS</a>: LP, MIP</li>
+<li><img data-src="assets/logos/scip.png" style="height:1.4em; margin:0 0.3em 0 0; vertical-align:middle;"><a href="https://www.scipopt.org">SCIP</a>: MIP, MINLP</li>
+<li><a href="https://github.com/coin-or/Cbc">CBC</a>, <a href="https://www.gnu.org/software/glpk/">GLPK</a>, <a href="https://developers.google.com/optimization">OR-Tools</a>, <a href="https://coin-or.github.io/Ipopt/">Ipopt</a>, <a href="https://github.com/NVIDIA/cuopt">cuOpt</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+<aside class="notes">
+<p>A modeling language states the model; a solver finds the optimum. Pyomo, JuMP and PuLP hand the same model to any of the solvers on the right. gurobipy talks to Gurobi only. Solver comparisons: Mittelmann’s benchmarks, https://plato.asu.edu/bench.html.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section id="notebook-potato-farms-in-gurobipy" class="slide level2 smaller">
 <h2>Notebook: Potato Farms in GurobiPy</h2>
@@ -1908,6 +1975,11 @@ Sebastian Souyris
               if (link.dataset.originalHref !== undefined) {
                 link.href = link.dataset.originalHref;
               }
+                // target, if specified
+                link.setAttribute("target", "_blank");
+                if (link.getAttribute("rel") === null) {
+                  link.setAttribute("rel", "noopener");
+                }
             }
           }
         function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
