@@ -711,45 +711,6 @@ Sebastian Souyris
 </div>
 </div>
 </section>
-<section id="gurobipy-and-the-gurobi-optimizer" class="slide level2 smaller">
-<h2>GurobiPy and the Gurobi Optimizer</h2>
-<div class="columns">
-<div class="column" style="width:48%;">
-<div title="Modeling API: gurobipy">
-<div class="callout callout-note no-icon callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<p><strong>Modeling API: gurobipy</strong></p>
-</div>
-<div class="callout-content">
-<p>A Python package: variables, constraints and objective are Python expressions over index sets.</p>
-</div>
-</div>
-</div>
-</div>
-</div><div class="column" style="width:48%;">
-<div title="Solver: Gurobi Optimizer">
-<div class="callout callout-note no-icon callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<p><strong>Solver: Gurobi Optimizer</strong></p>
-</div>
-<div class="callout-content">
-<p>Solves LP and MIP models: branch and bound plus presolve, cuts and heuristics.</p>
-</div>
-</div>
-</div>
-</div>
-</div></div>
-<p><strong>Teaching resources</strong></p>
-<ul>
-<li><a href="https://colab.research.google.com/drive/1XWQTKV32nmnk29huDuMmS5pAs6cSVIHG">python_basics.ipynb</a>: the Python the course notebooks use, for students new to it</li>
-<li><a href="https://www.gurobi.com/">gurobi.com</a>: documentation and free <a href="https://www.gurobi.com/academia/academic-program-and-licenses/">academic licenses</a></li>
-<li><a href="https://github.com/Gurobi">github.com/Gurobi</a>: open source repositories, among them <strong>modeling-examples</strong>, the template for our notebooks</li>
-<li><a href="https://www.gurobi.com/resources/demos?demo-type=Jupyter+Notebook+Demo">Jupyter notebook demos</a>: scheduling, portfolios, pricing, airline recovery</li>
-</ul>
-<p><code>pip install gurobipy</code> includes a license for models up to 2,000 variables and 2,000 constraints, enough for this course.</p>
-</section>
 <section id="modeling-languages-and-solvers" class="slide level2 smaller">
 <h2>Modeling Languages and Solvers</h2>
 <div class="columns">
@@ -795,13 +756,14 @@ Sebastian Souyris
 <ul>
 <li><img data-src="assets/logos/highs.png" style="height:1.4em; margin:0 0.3em 0 0; vertical-align:middle;"><a href="https://highs.dev">HiGHS</a>: LP, MIP</li>
 <li><img data-src="assets/logos/scip.png" style="height:1.4em; margin:0 0.3em 0 0; vertical-align:middle;"><a href="https://www.scipopt.org">SCIP</a>: MIP, MINLP</li>
-<li><a href="https://github.com/coin-or/Cbc">CBC</a>, <a href="https://www.gnu.org/software/glpk/">GLPK</a>, <a href="https://developers.google.com/optimization">OR-Tools</a>, <a href="https://coin-or.github.io/Ipopt/">Ipopt</a>, <a href="https://github.com/NVIDIA/cuopt">cuOpt</a></li>
+<li><a href="https://github.com/coin-or/Cbc">CBC</a>, <a href="https://www.gnu.org/software/glpk/">GLPK</a>, <a href="https://developers.google.com/optimization">OR-Tools (Google)</a>, <a href="https://coin-or.github.io/Ipopt/">Ipopt</a>, <a href="https://github.com/NVIDIA/cuopt">cuOpt</a></li>
 </ul>
 </div>
 </div>
 </div>
 </div>
 </div></div>
+<p>Not an exhaustive list.</p>
 <aside class="notes">
 <p>A modeling language states the model; a solver finds the optimum. Pyomo, JuMP and PuLP hand the same model to any of the solvers on the right. gurobipy talks to Gurobi only. Solver comparisons: Mittelmann’s benchmarks, https://plato.asu.edu/bench.html.</p>
 <style type="text/css">
@@ -815,6 +777,45 @@ Sebastian Souyris
           overflow: hidden!important;
           display:block!important;
       }</style></aside>
+</section>
+<section id="gurobipy-and-the-gurobi-optimizer" class="slide level2 smaller">
+<h2>GurobiPy and the Gurobi Optimizer</h2>
+<div class="columns">
+<div class="column" style="width:48%;">
+<div title="Modeling API: gurobipy">
+<div class="callout callout-note no-icon callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<p><strong>Modeling API: gurobipy</strong></p>
+</div>
+<div class="callout-content">
+<p>A Python package: variables, constraints and objective are Python expressions over index sets.</p>
+</div>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:48%;">
+<div title="Solver: Gurobi Optimizer">
+<div class="callout callout-note no-icon callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<p><strong>Solver: Gurobi Optimizer</strong></p>
+</div>
+<div class="callout-content">
+<p>Solves LP and MIP models: branch and bound plus presolve, cuts and heuristics.</p>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+<p><strong>Teaching resources</strong></p>
+<ul>
+<li><a href="https://colab.research.google.com/drive/1XWQTKV32nmnk29huDuMmS5pAs6cSVIHG">python_basics.ipynb</a>: the Python the course notebooks use, for students new to it</li>
+<li><a href="https://www.gurobi.com/">gurobi.com</a>: documentation and free <a href="https://www.gurobi.com/academia/academic-program-and-licenses/">academic licenses</a></li>
+<li><a href="https://github.com/Gurobi">github.com/Gurobi</a>: open source repositories, among them <strong>modeling-examples</strong>, the template for our notebooks</li>
+<li><a href="https://www.gurobi.com/resources/demos?demo-type=Jupyter+Notebook+Demo">Jupyter notebook demos</a>: scheduling, portfolios, pricing, airline recovery</li>
+</ul>
+<p><code>pip install gurobipy</code> includes a license for models up to 2,000 variables and 2,000 constraints, enough for this course.</p>
 </section>
 <section id="notebook-potato-farms-in-gurobipy" class="slide level2 smaller">
 <h2>Notebook: Potato Farms in GurobiPy</h2>
