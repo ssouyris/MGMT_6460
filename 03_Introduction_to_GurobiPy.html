@@ -932,7 +932,7 @@ Sebastian Souyris
 
      The two pale tints are chosen to sit under $deckblue rather than
      taken from theme.scss, which defines no land colour. -->
-<div id="5dcb270f" class="cell" data-execution_count="1">
+<div id="bd753176" class="cell" data-execution_count="1">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1319,23 +1319,31 @@ x_i = 0 \text{ or } 1 \quad \text{for all } i = 1, \dots, 12
 
      TWO COLUMNS, the file Solver takes on the left.
 
-     ONE INSTANCE FILE, not two workbooks: the CSV carries population, so
-     a threshold is a filter rather than a separate file. MGMT 4100 ships
-     an .xlsx per cut instead, with the Solver model already laid out.
+     TWO WORKBOOKS, one per cut, each with the Solver model laid out and
+     its changing cells at zero, so a student runs Solver and sees it
+     refuse the 128. Both came from MGMT 4100's Data/, built there by
+     build_set_covering_usa.py. Their coverage uses GREAT CIRCLE distance
+     where the notebook now uses the flat-earth one; the two matrices
+     differ in 6 of 16,384 cells and both give 16 and 15, so the slide
+     holds either way.
+
+     The notebook reads Data/US_Cities_Over_200k_2024.csv instead, which
+     carries population, so there a threshold is a filter rather than a
+     separate file.
 
      Fence widths rise with the nesting, five colons to three, so Pandoc
      cannot mistake which div a `:::` closes. -->
 <p>The same model, every US city past a population threshold: one binary per city, one coverage constraint per city, a hub within 300 miles of every one.</p>
 <div class="columns">
 <div class="column" style="width:49%;">
-<div title="Above 250,000 people">
+<div title="Download [Set_Covering_USA_250k_Model.xlsx](Data/Set_Covering_USA_250k_Model.xlsx){.title-link}">
 <div class="callout callout-tip no-icon callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
-<p><strong>Above 250,000 people</strong></p>
+<p><strong>Download <a href="Data/Set_Covering_USA_250k_Model.xlsx" class="title-link">Set_Covering_USA_250k_Model.xlsx</a></strong></p>
 </div>
 <div class="callout-content">
-<p>93 cities: 93 binary variables, 93 coverage constraints.</p>
+<p>93 cities with population above 250,000: 93 binary variables, 93 coverage constraints.</p>
 <p>Excel answers <em>“Solver found a solution. All constraints and optimality conditions are satisfied.”</em></p>
 <p>The optimum is 15 hubs.</p>
 </div>
@@ -1343,14 +1351,14 @@ x_i = 0 \text{ or } 1 \quad \text{for all } i = 1, \dots, 12
 </div>
 </div>
 </div><div class="column" style="width:49%;">
-<div title="Above 200,000 people">
+<div title="Download [Set_Covering_USA_200k_Model.xlsx](Data/Set_Covering_USA_200k_Model.xlsx){.title-link}">
 <div class="callout callout-warning no-icon callout-titled callout-style-default">
 <div class="callout-body">
 <div class="callout-title">
-<p><strong>Above 200,000 people</strong></p>
+<p><strong>Download <a href="Data/Set_Covering_USA_200k_Model.xlsx" class="title-link">Set_Covering_USA_200k_Model.xlsx</a></strong></p>
 </div>
 <div class="callout-content">
-<p>128 cities: 128 binary variables, 128 coverage constraints.</p>
+<p>128 cities with population above 200,000: 128 binary variables, 128 coverage constraints.</p>
 <p>Excel answers <em>“The problem is too large for Solver to handle.”</em></p>
 <p>The optimum is 16 hubs.</p>
 </div>
