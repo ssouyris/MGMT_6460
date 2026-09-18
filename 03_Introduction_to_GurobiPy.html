@@ -932,7 +932,7 @@ Sebastian Souyris
 
      The two pale tints are chosen to sit under $deckblue rather than
      taken from theme.scss, which defines no land colour. -->
-<div id="290ec768" class="cell" data-execution_count="1">
+<div id="2fef6345" class="cell" data-execution_count="1">
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure>
@@ -1469,27 +1469,16 @@ x_i = 0 \text{ or } 1 \quad \text{for all } i = 1, \dots, 12
 <section id="practice-problem-costs-and-distances" class="slide level2 smaller">
 <h2>Practice Problem: Costs and Distances</h2>
 <!-- FROM COVERING TO FACILITY LOCATION. Set covering asks only whether a
-     city is reachable; every hub within 300 miles is as good as any
+     city is reachable, so every hub within 300 miles is as good as any
      other, which is why 26 different sets of four tie on the twelve
      cities. Putting distance in the objective breaks those ties, and the
      model becomes the uncapacitated facility location problem.
 
-     TWO INDEX SETS NOW, so this is the first model in the course whose
-     variables are not one per city: y over hubs, x over hub-city pairs.
-     At 128 cities x has 16,384 entries, still inside the pip licence's
-     2,000 variables only if the pairs are restricted; unrestricted it is
-     NOT, and a student who builds the full x will hit GurobiError 10010.
-     Restricting x to pairs within some radius is the fix, and is itself
-     worth discussing. The slide says so in Step 4.
+     A FORMULATION EXERCISE, at Sebastian's request: the slide states the
+     problem and nothing else. No gurobipy, no steps, no solving.
 
-     THE UNITS PROBLEM IS DELIBERATE and is the point of the caution box:
-     c is in dollars and d is in miles, and the two cannot be added
-     without a price per mile. Students who miss it get an objective that
-     is arithmetically fine and meaningless.
-
-     NO KEY HERE: c_i is not in the published instance, so the answer
-     depends on what the class assumes. Give values in class, or let them
-     take c_i proportional to population. -->
+     NO KEY: c_i is not in the published instance, so the answer depends
+     on what the class assumes. -->
 <div title="Adapt the model">
 <div class="callout callout-tip no-icon callout-titled callout-style-default">
 <div class="callout-body">
@@ -1502,30 +1491,14 @@ x_i = 0 \text{ or } 1 \quad \text{for all } i = 1, \dots, 12
 <li><span class="math inline">\(c_i\)</span>, the cost of opening a hub in city <span class="math inline">\(i\)</span></li>
 <li><span class="math inline">\(d_{ij}\)</span>, the distance from city <span class="math inline">\(i\)</span> to city <span class="math inline">\(j\)</span></li>
 </ul>
-<p><strong>Minimize the cost of the hubs opened plus the total distance from hubs to the cities they serve.</strong></p>
+<p><strong>Minimize the cost of the hubs opened plus the total distance from the hubs to the cities they serve.</strong></p>
 </div>
 </div>
 </div>
 </div>
-<div title="What to do">
-<div class="callout callout-caution no-icon callout-titled callout-style-default">
-<div class="callout-body">
-<div class="callout-title">
-<p><strong>What to do</strong></p>
-</div>
-<div class="callout-content">
-<ul>
-<li><strong>Step 1.</strong> You need a second variable. <span class="math inline">\(y_i\)</span> still says whether city <span class="math inline">\(i\)</span> gets a hub; add <span class="math inline">\(x_{ij} = 1\)</span> if city <span class="math inline">\(j\)</span> is served by the hub at <span class="math inline">\(i\)</span>.</li>
-<li><strong>Step 2.</strong> Every city is served by exactly one hub, and a city can only be served from a hub that is open. That second one is a <strong>linking constraint</strong>, as in the potato farms model.</li>
-<li><strong>Step 3.</strong> Write the objective as <span class="math inline">\(\sum_i c_i y_i + \sum_{i,j} d_{ij} x_{ij}\)</span> and say what is wrong with it. Dollars and miles do not add.</li>
-<li><strong>Step 4.</strong> Solve it. With 128 cities <span class="math inline">\(x\)</span> has 16,384 entries, past the 2,000 the <code>pip</code> licence allows. What restriction on the pairs makes it fit, and what does that restriction cost you?</li>
-</ul>
-</div>
-</div>
-</div>
-</div>
+<p>Write the model: the decision variables, the objective, and the constraints.</p>
 <aside class="notes">
-<p>This is the uncapacitated facility location problem. The covering model asked only whether a city was reachable, so all 26 four-hub sets tied; distance in the objective breaks the tie and picks one. Step 3’s answer is a price per mile, or equivalently a weight on the distance term, and it is a judgement the model cannot make for you. Step 4’s answer is to build x only for pairs within some radius, which is exactly the coverage matrix returning as a modeling device rather than as a constraint.</p>
+<p>This is the uncapacitated facility location problem. It needs a second variable, x_ij for city j served by the hub at i, an assignment constraint so every city is served exactly once, and a linking constraint so a city is only served from an open hub. Two things to raise in discussion: c is in dollars and d is in miles, so the objective needs a price per mile before it means anything, and the covering model’s tie among 26 optima disappears once distance is priced.</p>
 <style type="text/css">
         span.MJX_Assistive_MathML {
           position:absolute!important;
