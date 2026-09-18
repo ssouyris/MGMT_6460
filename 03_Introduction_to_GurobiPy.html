@@ -907,8 +907,558 @@ Sebastian Souyris
 </tbody>
 </table>
 <p>Result: farms 1, 2, 4 and 6 for $2,082,300, the Excel answer.</p>
+</section>
+<section id="set-covering-example-1-of-4" class="slide level2">
+<h2>Set Covering Example (1 of 4)</h2>
+<p>APS wants to construct the minimum set of new hubs in these twelve cities such that there is a hub within 300 miles of every city:</p>
+<!-- THE TWELVE CITIES ON A MAP, so the coverage table on the next slide
+     reads as geography rather than as a list. Light on purpose: pale
+     land, hairline borders, the cities the only saturated mark.
+
+     No 300-mile rings. Twelve of them overlap into a wash that buries
+     the borders, and the next two slides carry the coverage anyway.
+
+     Boundaries: Data/US_States_20m.geojson, written by
+     modeling-examples/set_covering_hubs/build_city_data.py from the US
+     Census 2024 cartographic boundary file cb_2024_us_state_20m (public
+     domain). Read FROM DISK, never fetched: an off-origin asset fails
+     post-render.py. Alaska and Hawaii are dropped before plotting, being
+     outside the frame and badly distorted by a CONUS projection.
+
+     EPSG:5070 is Albers equal area for the lower 48, so the shapes and
+     the distances between cities are the map's rather than a plate
+     carree stretch. The Census file drops the Great Lakes, which is why
+     Michigan and Erie read as water.
+
+     The two pale tints are chosen to sit under $deckblue rather than
+     taken from theme.scss, which defines no land colour. -->
+<div id="5dcb270f" class="cell" data-execution_count="1">
+<div class="cell-output cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="03_Introduction_to_GurobiPy_files/figure-revealjs/cell-2-output-1.png" class="quarto-figure quarto-figure-center" width="941" height="336"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="set-covering-example-2-of-4" class="slide level2">
+<h2>Set Covering Example (2 of 4)</h2>
+<div style="font-size: 0.7em;">
+<table class="caption-top">
+<colgroup>
+<col style="width: 20%">
+<col style="width: 79%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">City</th>
+<th style="text-align: left;">Cities within 300 miles</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">1. Atlanta</td>
+<td style="text-align: left;">Atlanta, Charlotte, Nashville</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2. Boston</td>
+<td style="text-align: left;">Boston, New York</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">3. Charlotte</td>
+<td style="text-align: left;">Atlanta, Charlotte, Richmond</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">4. Cincinnati</td>
+<td style="text-align: left;">Cincinnati, Detroit, Indianapolis, Nashville, Pittsburgh</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">5. Detroit</td>
+<td style="text-align: left;">Cincinnati, Detroit, Indianapolis, Milwaukee, Pittsburgh</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">6. Indianapolis</td>
+<td style="text-align: left;">Cincinnati, Detroit, Indianapolis, Milwaukee, Nashville, St.&nbsp;Louis</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">7. Milwaukee</td>
+<td style="text-align: left;">Detroit, Indianapolis, Milwaukee</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">8. Nashville</td>
+<td style="text-align: left;">Atlanta, Cincinnati, Indianapolis, Nashville, St.&nbsp;Louis</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">9. New York</td>
+<td style="text-align: left;">Boston, New York, Richmond</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">10. Pittsburgh</td>
+<td style="text-align: left;">Cincinnati, Detroit, Pittsburgh, Richmond</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">11. Richmond</td>
+<td style="text-align: left;">Charlotte, New York, Pittsburgh, Richmond</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">12. St.&nbsp;Louis</td>
+<td style="text-align: left;">Indianapolis, Nashville, St.&nbsp;Louis</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="set-covering-example-3-of-4" class="slide level2">
+<h2>Set Covering Example (3 of 4)</h2>
+<p>1 where the column’s city is within 300 miles of the row’s city, so row <span class="math inline">\(i\)</span> is the left side of city <span class="math inline">\(i\)</span>’s constraint. The matrix is symmetric.</p>
+<!-- THE COVERAGE MATRIX: the previous slide's prose table as the shape
+     the constraints take. The column heads are the row names abbreviated
+     in the row order, so column j is city j, the x_j of the next slide.
+
+     The 0/1 cells are the matrix the set covering notebook asserts is
+     symmetric with a 1 on every diagonal, and which it checks against
+     Data/Set_Covering_Hubs.xlsx cell for cell. Rebuild it from there
+     rather than editing cells by hand.
+
+     0.6em and the dash widths together: at 72 characters or more a pipe
+     table takes the full width and sizes its columns by the dashes, so
+     the 17 dashes on the name column against 3 on each city column set
+     the split. At body size the twelve columns overran the frame. -->
+<div style="font-size: 0.6em;">
+<table class="caption-top">
+<colgroup>
+<col style="width: 22%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">City</th>
+<th style="text-align: center;">Atl</th>
+<th style="text-align: center;">Bos</th>
+<th style="text-align: center;">Cha</th>
+<th style="text-align: center;">Cin</th>
+<th style="text-align: center;">Det</th>
+<th style="text-align: center;">Ind</th>
+<th style="text-align: center;">Mil</th>
+<th style="text-align: center;">Nas</th>
+<th style="text-align: center;">NYC</th>
+<th style="text-align: center;">Pit</th>
+<th style="text-align: center;">Ric</th>
+<th style="text-align: center;">StL</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">1. Atlanta</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">2. Boston</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">3. Charlotte</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">4. Cincinnati</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">5. Detroit</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">6. Indianapolis</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">7. Milwaukee</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">8. Nashville</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">9. New York</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">10. Pittsburgh</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">11. Richmond</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">12. St.&nbsp;Louis</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="set-covering-example-4-of-4" class="slide level2">
+<h2>Set Covering Example (4 of 4)</h2>
+<p><span class="math inline">\(x_i = 1\)</span> if city <span class="math inline">\(i\)</span> is selected as a hub and 0 if it is not, <span class="math inline">\(i = 1\)</span> to 12.</p>
+<!-- THE WHOLE MODEL ON ONE SLIDE. Deck 02 sets the same system in a
+     narrower array; this one gives every variable its own column.
+
+     ONE COLUMN PER VARIABLE, so x_j is in the same place on all thirteen
+     rows and the gaps show which cities a hub does not reach. A leading
+     term is \phantom{+}x_j, not x_j: without the phantom the column
+     right-aligns a narrower cell and the x slides out of line. Column
+     gaps are written into the preamble, since \setlength does nothing
+     here.
+
+     "subject to:" is a row of the same array rather than text above it.
+     Two arrays size their columns separately, which is exactly the
+     alignment this slide is for; \multicolumn is undefined in MathJax,
+     so it takes the label column on its own.
+
+     0.64em, and the binary condition sits inside the same block rather
+     than in a display of its own: the slide is limited by its height,
+     not its width. -->
+<div style="font-size: 0.64em;">
+<p><span class="math display">\[
+\begin{array}{r@{\enspace}r@{\,}r@{\,}r@{\,}r@{\,}r@{\,}r@{\,}r@{\,}r@{\,}r@{\,}r@{\,}r@{\,}r@{\enspace}c@{\enspace}l}
+\text{Minimize } Z =   &amp; \phantom{+}x_1 &amp; +x_2 &amp; +x_3 &amp; +x_4 &amp; +x_5 &amp; +x_6 &amp; +x_7 &amp; +x_8 &amp; +x_9 &amp; +x_{10} &amp; +x_{11} &amp; +x_{12} &amp;  &amp;  \\
+\text{subject to:}     &amp;  &amp;  &amp;  &amp;  &amp;  &amp;  &amp;  &amp;  &amp;  &amp;  &amp;  &amp;  &amp;  &amp;  \\
+\text{Atlanta:}        &amp; \phantom{+}x_1 &amp;  &amp; +x_3 &amp;  &amp;  &amp;  &amp;  &amp; +x_8 &amp;  &amp;  &amp;  &amp;  &amp; \ge &amp; 1 \\
+\text{Boston:}         &amp;  &amp; \phantom{+}x_2 &amp;  &amp;  &amp;  &amp;  &amp;  &amp;  &amp; +x_9 &amp;  &amp;  &amp;  &amp; \ge &amp; 1 \\
+\text{Charlotte:}      &amp; \phantom{+}x_1 &amp;  &amp; +x_3 &amp;  &amp;  &amp;  &amp;  &amp;  &amp;  &amp;  &amp; +x_{11} &amp;  &amp; \ge &amp; 1 \\
+\text{Cincinnati:}     &amp;  &amp;  &amp;  &amp; \phantom{+}x_4 &amp; +x_5 &amp; +x_6 &amp;  &amp; +x_8 &amp;  &amp; +x_{10} &amp;  &amp;  &amp; \ge &amp; 1 \\
+\text{Detroit:}        &amp;  &amp;  &amp;  &amp; \phantom{+}x_4 &amp; +x_5 &amp; +x_6 &amp; +x_7 &amp;  &amp;  &amp; +x_{10} &amp;  &amp;  &amp; \ge &amp; 1 \\
+\text{Indianapolis:}   &amp;  &amp;  &amp;  &amp; \phantom{+}x_4 &amp; +x_5 &amp; +x_6 &amp; +x_7 &amp; +x_8 &amp;  &amp;  &amp;  &amp; +x_{12} &amp; \ge &amp; 1 \\
+\text{Milwaukee:}      &amp;  &amp;  &amp;  &amp;  &amp; \phantom{+}x_5 &amp; +x_6 &amp; +x_7 &amp;  &amp;  &amp;  &amp;  &amp;  &amp; \ge &amp; 1 \\
+\text{Nashville:}      &amp; \phantom{+}x_1 &amp;  &amp;  &amp; +x_4 &amp;  &amp; +x_6 &amp;  &amp; +x_8 &amp;  &amp;  &amp;  &amp; +x_{12} &amp; \ge &amp; 1 \\
+\text{New York:}       &amp;  &amp; \phantom{+}x_2 &amp;  &amp;  &amp;  &amp;  &amp;  &amp;  &amp; +x_9 &amp;  &amp; +x_{11} &amp;  &amp; \ge &amp; 1 \\
+\text{Pittsburgh:}     &amp;  &amp;  &amp;  &amp; \phantom{+}x_4 &amp; +x_5 &amp;  &amp;  &amp;  &amp;  &amp; +x_{10} &amp; +x_{11} &amp;  &amp; \ge &amp; 1 \\
+\text{Richmond:}       &amp;  &amp;  &amp; \phantom{+}x_3 &amp;  &amp;  &amp;  &amp;  &amp;  &amp; +x_9 &amp; +x_{10} &amp; +x_{11} &amp;  &amp; \ge &amp; 1 \\
+\text{St. Louis:}      &amp;  &amp;  &amp;  &amp;  &amp;  &amp; \phantom{+}x_6 &amp;  &amp; +x_8 &amp;  &amp;  &amp;  &amp; +x_{12} &amp; \ge &amp; 1 \\
+\end{array}
+\]</span></p>
+<p><span class="math display">\[
+x_i = 0 \text{ or } 1 \quad \text{for all } i = 1, \dots, 12
+\]</span></p>
+</div>
+</section>
+<section id="set-covering-example-in-excel" class="slide level2">
+<h2>Set Covering Example in Excel</h2>
+<div title="Download [Set_Covering_Hubs.xlsx](Data/Set_Covering_Hubs.xlsx){.title-link} and open it">
+<div class="callout callout-tip no-icon callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<p><strong>Download <a href="Data/Set_Covering_Hubs.xlsx" class="title-link">Set_Covering_Hubs.xlsx</a> and open it</strong></p>
+</div>
+<div class="callout-content">
+<p>Four hubs cover every city: the workbook opens at Indianapolis, Nashville, New York and Richmond. The optimum is not unique; 26 sets of four hubs work, among them Boston, Charlotte, Detroit and St.&nbsp;Louis, and no set of three does. The hub selections (B17:M17) are binary, and each city’s coverage (N4:N15) is set <span class="math inline">\(\ge 1\)</span>.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="set-covering-at-scale" class="slide level2 smaller">
+<h2>Set Covering at Scale</h2>
+<!-- WHERE SOLVER STOPS: the same model over every US city past a
+     population cut, built in this project by
+     modeling-examples/set_covering_hubs/build_city_data.py from two
+     public domain Census files. Each optimum was proved before it went
+     on the slide: the LP relaxation meets the integer optimum at both
+     cuts, so 16 and 15 are minimal rather than merely the best found.
+
+     Both dialogs are quoted, run in Excel by Sebastian in September
+     2026. Excel's own wording puts two spaces after the first sentence
+     of the second one; the slide sets one.
+
+     TWO COLUMNS, the file Solver takes on the left.
+
+     ONE INSTANCE FILE, not two workbooks: the CSV carries population, so
+     a threshold is a filter rather than a separate file. MGMT 4100 ships
+     an .xlsx per cut instead, with the Solver model already laid out.
+
+     Fence widths rise with the nesting, five colons to three, so Pandoc
+     cannot mistake which div a `:::` closes. -->
+<p>The same model, every US city past a population threshold: one binary per city, one coverage constraint per city, a hub within 300 miles of every one.</p>
+<div class="columns">
+<div class="column" style="width:49%;">
+<div title="Above 250,000 people">
+<div class="callout callout-tip no-icon callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<p><strong>Above 250,000 people</strong></p>
+</div>
+<div class="callout-content">
+<p>93 cities: 93 binary variables, 93 coverage constraints.</p>
+<p>Excel answers <em>“Solver found a solution. All constraints and optimality conditions are satisfied.”</em></p>
+<p>The optimum is 15 hubs.</p>
+</div>
+</div>
+</div>
+</div>
+</div><div class="column" style="width:49%;">
+<div title="Above 200,000 people">
+<div class="callout callout-warning no-icon callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<p><strong>Above 200,000 people</strong></p>
+</div>
+<div class="callout-content">
+<p>128 cities: 128 binary variables, 128 coverage constraints.</p>
+<p>Excel answers <em>“The problem is too large for Solver to handle.”</em></p>
+<p>The optimum is 16 hubs.</p>
+</div>
+</div>
+</div>
+</div>
+</div></div>
+<p>Solver allows 200 changing cells and constraints on 100 cells that are not changing cells. The extra 35 cities are worth one hub, and cost the answer. Gurobi solves the 128 at the root node in about 3 ms.</p>
+</section>
+<section id="notebook-parcel-hubs-in-gurobipy" class="slide level2 smaller">
+<h2>Notebook: Parcel Hubs in GurobiPy</h2>
+<div title="Open [set_covering_hubs.ipynb](https://colab.research.google.com/drive/1iXprqzxoRG6UtP5nwb9qZZg9CcjOaFbi){.title-link} in Google Colab">
+<div class="callout callout-tip no-icon callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<p><strong>Open <a href="https://colab.research.google.com/drive/1iXprqzxoRG6UtP5nwb9qZZg9CcjOaFbi" class="title-link">set_covering_hubs.ipynb</a> in Google Colab</strong></p>
+</div>
+<div class="callout-content">
+<p>Lecture 02’s set covering model, then the same model on an instance Solver will not accept. Run the cells from top to bottom.</p>
+</div>
+</div>
+</div>
+</div>
+<table class="caption-top">
+<colgroup>
+<col style="width: 56%">
+<col style="width: 43%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Formulation</th>
+<th style="text-align: left;">gurobipy</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(x_j \in \{0, 1\}\)</span></td>
+<td style="text-align: left;"><code>x = m.addVars(cities, vtype=GRB.BINARY)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span class="math inline">\(\min \sum_j x_j\)</span></td>
+<td style="text-align: left;"><code>m.setObjective(x.sum(), GRB.MINIMIZE)</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span class="math inline">\(\sum_j a_{ij} x_j \ge 1 \;\; \forall i\)</span></td>
+<td style="text-align: left;"><code>m.addConstrs(quicksum(x[j] for j in coverage[i]) &gt;= 1 for i in cities)</code></td>
+</tr>
+</tbody>
+</table>
+<p>Result: Indianapolis, Nashville, New York and Richmond, the Excel answer. The notebook then checks all 495 subsets of size 4 and all 220 of size 3: <strong>26 cover every city, none of size 3 does</strong>, so lecture 02’s two claims are established rather than assumed.</p>
+</section>
+<section>
+<section id="practice-hubs-at-250-miles" class="title-slide slide level1 center">
+<h1>Practice: Hubs at 250 Miles</h1>
 
 </section>
+<section id="practice-problem" class="slide level2 smaller">
+<h2>Practice Problem</h2>
+<!-- THEIR OWN WORK, not the notebook's. The notebook solves the 300-mile
+     instance in front of them and prints 16, 15 and 14; at 250 miles no
+     slide and no cell carries the answer.
+
+     MEASURED, September 2026, so the hint below is calibrated and the
+     key is on record: at 250 miles the optimum is 21 hubs over the 128
+     cities and 19 over the 93. The LP relaxation meets the integer
+     optimum at both, as it does at 300, so a student who checks the
+     bound can prove minimality without being told. For reference the
+     full radius sweep over the 128 is 200 mi: 27, 250: 21, 300: 16,
+     400: 11, 500: 8.
+
+     THE INSTANCE IS ON GITHUB rather than in Data/ on purpose: the ask
+     is to fetch data and build a model from it, which is the workflow
+     the notebook demonstrates. The same file is served from
+     https://ssouyris.com/MGMT_6460/Data/ if a student cannot reach
+     GitHub. IT MUST BE PUBLISHED FIRST; the link 404s until then. -->
+<div title="Download [US_Cities_Over_200k_2024.csv](https://github.com/ssouyris/MGMT_6460/tree/main/Data){.title-link} from GitHub">
+<div class="callout callout-tip no-icon callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<p><strong>Download <a href="https://github.com/ssouyris/MGMT_6460/tree/main/Data" class="title-link">US_Cities_Over_200k_2024.csv</a> from GitHub</strong></p>
+</div>
+<div class="callout-content">
+<p>128 US cities above 200,000 people, with 2024 Census population and coordinates: <code>name</code>, <code>state</code>, <code>population</code>, <code>lat</code>, <code>lon</code>.</p>
+<p>APS reconsiders. A hub now serves a city only within <strong>250 miles</strong>, not 300. How many hubs, and where?</p>
+</div>
+</div>
+</div>
+</div>
+<div title="What to do">
+<div class="callout callout-caution no-icon callout-titled callout-style-default">
+<div class="callout-body">
+<div class="callout-title">
+<p><strong>What to do</strong></p>
+</div>
+<div class="callout-content">
+<ul>
+<li><strong>Step 1.</strong> Compute coverage yourself: 69 miles to a degree of latitude, and 69 times the cosine of the latitude to a degree of longitude, then <span class="math inline">\(a_{ij} = 1\)</span> where the distance is at most 250. Assert the matrix is symmetric with a 1 on every diagonal.</li>
+<li><strong>Step 2.</strong> Build and solve the model in <code>gurobipy</code>: <code>addVars</code> binary, <code>setObjective</code>, one <code>addConstrs</code> over the cities.</li>
+<li><strong>Step 3.</strong> Solve <code>m.relax()</code>. If the bound equals your objective, you have <strong>proved</strong> the number minimal rather than merely found it.</li>
+<li><strong>Step 4.</strong> Repeat above 250,000 people, which is 93 cities. Does the tighter radius cost more hubs than the larger city list saves?</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<p>Shorter reach means more hubs. Report the count, the cities, and which ones the geography forced on you.</p>
+
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <p><img src="assets/RPI_Lockup_Lally_Sm.png" class="slide-logo"></p>
