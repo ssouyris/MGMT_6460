@@ -101,7 +101,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="01_Introduction_to_Linear_Programming_files/libs/revealjs/dist/theme/quarto-278e4992202d06b1c62ca2594d913999.css">
+  <link rel="stylesheet" href="01_Introduction_to_Linear_Programming_files/libs/revealjs/dist/theme/quarto-cd013b150a25af678e7b927a7a6b6e04.css">
   <link href="01_Introduction_to_Linear_Programming_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="01_Introduction_to_Linear_Programming_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="01_Introduction_to_Linear_Programming_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -2168,6 +2168,13 @@ Beginner notebooks: <a href="https://www.gurobi.com/jupyter_models/">gurobi.com/
       //
       // Both come out 0 on a true 16:9 screen, where the calc() rules that
       // read them then change nothing.
+      //
+      // --rpi-scale is the third. The progress line sits 34 CANVAS pixels off
+      // the foot of the slide (theme.scss section 3), which is 34px in a
+      // 1050px window and 62px in a 1920px one, while the menu and drawing
+      // buttons are fixed in WINDOW pixels: at a fixed 48px the line climbed
+      // into the menu icon on any large window [seen by Sebastian, September
+      // 2026]. The buttons' offset multiplies by this to stay above the line.
       function measureLetterbox() {
         var slides = document.querySelector(".reveal .slides");
         if (!slides) return;
@@ -2178,6 +2185,9 @@ Beginner notebooks: <a href="https://www.gurobi.com/jupyter_models/">gurobi.com/
         var root = document.documentElement.style;
         root.setProperty("--rpi-letterbox-x", x + "px");
         root.setProperty("--rpi-letterbox-y", y + "px");
+        var scale = (window.Reveal && Reveal.getScale && Reveal.getScale()) ||
+                    (slides.offsetWidth ? r.width / slides.offsetWidth : 1);
+        root.setProperty("--rpi-scale", scale.toFixed(4));
       }
 
       function boot() {
