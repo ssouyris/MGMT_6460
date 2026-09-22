@@ -35,7 +35,7 @@
       vertical-align: middle;
     }
   </style>
-  <link rel="stylesheet" href="03_Introduction_to_GurobiPy_files/libs/revealjs/dist/theme/quarto-cd013b150a25af678e7b927a7a6b6e04.css">
+  <link rel="stylesheet" href="03_Introduction_to_GurobiPy_files/libs/revealjs/dist/theme/quarto-7eb3739b31b4834510edc2a442b68fb9.css">
   <link href="03_Introduction_to_GurobiPy_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="03_Introduction_to_GurobiPy_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="03_Introduction_to_GurobiPy_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -1743,13 +1743,12 @@ x_i = 0 \text{ or } 1 \quad \text{for all } i = 1, \dots, 12
 
            2. The frame-title progress bar. metroset{progressbar=frametitle}
               (0_Main.tex:85) draws it flush under the frame title, filled to
-              frame number / total. Reveal's own progress element sits at the
-              foot of the viewport, outside the scaled canvas, so it cannot
-              follow a title bar whose height changes with a two-line title.
-              A .rpi-progress element goes inside each slide instead.
+              frame number / total. Since round 136 content frames carry
+              none: the footline's n / total reads the same position.
 
            3. The same bar on section pages, where Metropolis draws it as the
-              rule under the section title (0_Main.pdf pages 3, 7, 21).
+              rule under the section title (0_Main.pdf pages 3, 7, 21). This
+              is the one place it is still drawn.
 
            4. A per-page footline for the PDF export. Reveal keeps .footer,
               .slide-number and the section slot as single elements outside
@@ -1834,14 +1833,15 @@ x_i = 0 \text{ or } 1 \quad \text{for all } i = 1, \dots, 12
         return map;
       }
 
-      // One bar per slide, directly after the frame title so it tracks the
-      // bar's real height. Section pages take it after the h1, where it
-      // replaces the rule.
+      // One bar per section page, after the h1, where it is the rule under
+      // the section title. Content frames took one after the h2 until round
+      // 136; their footline's n / total already gives the position, so
+      // `:scope > h2 ||` in front of the h1 lookup is what brings it back.
       function ensureProgressBars() {
         allSlides().forEach(function (s) {
           if (s.id === "title-slide" || s.classList.contains("standout")) return;
           if (s.querySelector(":scope > .rpi-progress")) return;
-          var head = s.querySelector(":scope > h2") || s.querySelector(":scope > h1");
+          var head = s.querySelector(":scope > h1");
           if (!head) return;
           var bar = document.createElement("div");
           bar.className = "rpi-progress";
@@ -1944,12 +1944,14 @@ x_i = 0 \text{ or } 1 \quad \text{for all } i = 1, \dots, 12
       // Both come out 0 on a true 16:9 screen, where the calc() rules that
       // read them then change nothing.
       //
-      // --rpi-scale is the third. The progress line sits 34 CANVAS pixels off
-      // the foot of the slide (theme.scss section 3), which is 34px in a
-      // 1050px window and 62px in a 1920px one, while the menu and drawing
-      // buttons are fixed in WINDOW pixels: at a fixed 48px the line climbed
-      // into the menu icon on any large window [seen by Sebastian, September
-      // 2026]. The buttons' offset multiplies by this to stay above the line.
+      // --rpi-scale is the third. Round 135's progress line sat 34 CANVAS
+      // pixels off the foot of the slide, which is 34px in a 1050px window
+      // and 62px in a 1920px one, while the menu and drawing buttons are
+      // fixed in WINDOW pixels: at a fixed 48px the line climbed into the
+      // menu icon on any large window [seen by Sebastian, September 2026].
+      // The buttons' offset multiplies by this to stay above it. Round 136
+      // removed the line from content frames and kept the offset, which
+      // still clears the footline at every scale.
       function measureLetterbox() {
         var slides = document.querySelector(".reveal .slides");
         if (!slides) return;
