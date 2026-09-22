@@ -35,7 +35,7 @@
       vertical-align: middle;
     }
   </style>
-  <link rel="stylesheet" href="03_Introduction_to_GurobiPy_files/libs/revealjs/dist/theme/quarto-257b214d82895b29d4c936f337c7b28a.css">
+  <link rel="stylesheet" href="03_Introduction_to_GurobiPy_files/libs/revealjs/dist/theme/quarto-22ff253b9eac284640ecc4bea960a39b.css">
   <link href="03_Introduction_to_GurobiPy_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="03_Introduction_to_GurobiPy_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="03_Introduction_to_GurobiPy_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -1766,7 +1766,8 @@ x_i = 0 \text{ or } 1 \quad \text{for all } i = 1, \dots, 12
          advance the count (0_Main.pdf shows "1 / 24" on the Roadmap, the
          first content frame of a 40-page PDF). The same rule is applied
          here, so the printed count matches the Beamer deck's convention
-         rather than Reveal's raw slide index.
+         rather than Reveal's raw slide index. A blank slide (`## {.blank}`)
+         is the one exception: it counts, and carries no footline.
 
          Delete this file and drop `include-after-body` from _quarto.yml to
          run the theme on bundled Quarto assets alone. You lose the centre
@@ -1792,6 +1793,9 @@ x_i = 0 \text{ or } 1 \quad \text{for all } i = 1, \dots, 12
           function (s) {
             if (s.querySelector(":scope > section")) return false;
             if (s.id === "title-slide") return true;
+            // `## {.blank}` has no heading text and may have no heading at
+            // all; it is a slide all the same (theme.scss section 6b).
+            if (s.classList.contains("blank")) return true;
             return !!s.querySelector(":scope > h1, :scope > h2");
           });
       }
@@ -1904,6 +1908,7 @@ x_i = 0 \text{ or } 1 \quad \text{for all } i = 1, \dots, 12
       function buildFootlines(map, tag) {
         map.forEach(function (info, s) {
           if (!info.counted) return;                       // no footline, as in Beamer
+          if (s.classList.contains("blank")) return;       // counted, but an empty canvas
           if (s.querySelector(":scope > .rpi-print-footline")) return;
           var bar = document.createElement("div");
           bar.className = "rpi-print-footline";   // class name kept: styled in theme.scss section 13c
