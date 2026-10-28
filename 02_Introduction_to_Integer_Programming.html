@@ -605,7 +605,19 @@
             // things too, so a per-container cache keeps each equation
             // self-contained and printable on its own.
             fontCache: "local",
-            scale: 1
+            scale: 1,
+            // Inline math stays on one line. MathJax 4 breaks an inline
+            // expression at a top-level + or = by default, so
+            // $\tilde a = \bar a + \eta \hat a$ wrapped mid-equation, and
+            // MGMT 6460 wrapped 242 inline equations as ${...}$ to stop it.
+            // Measured on lecture 05 with those braces stripped: 10 wraps on
+            // 8 slides with the default, 0 with this line. The cost is that
+            // an expression longer than its column overflows it: one did,
+            // by 16px, identically with the braces and with this line
+            // (October 2026, check-layout.py). The key is the output jax's
+            // default `linebreaks:{inline:!0,...}` in the vendored 4.1.3
+            // bundle, read by its `forceInlineBreaks`.
+            linebreaks: { inline: false }
           },
           options: {
             skipHtmlTags: ["script", "noscript", "style", "textarea", "pre"],
