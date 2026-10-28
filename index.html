@@ -100,11 +100,11 @@ ul.task-list li input[type="checkbox"] {
 
   /* The deck palette, repeated rather than imported: this page renders
      through Quarto's html format, which never sees theme.scss. Keep these
-     in step with theme.scss lines 36-49 if the palette ever moves. */
+     in step with the palette at the top of theme.scss (36-60) when it moves. */
   :root {
     --deckblue: #1D4158;
     --rpired:   #D6001C;
-    --ink:      #23373B;
+    --ink:      #242424;
     --paper:    #FAFAFA;
     --gray:     #B9CCD8;
     --tint:     #EFF2F3;
@@ -153,7 +153,7 @@ ul.task-list li input[type="checkbox"] {
     margin: 0 auto; padding: 40px 24px 52px;
   }
   main h2 {
-    font-size: 1.05rem; font-weight: 600; color: var(--deckblue);
+    font-size: 1.05rem; font-weight: 600; color: var(--ink);
     text-transform: uppercase; letter-spacing: 0.08em;
     margin: 44px 0 10px; padding-bottom: 7px;
     border-bottom: 1px solid var(--gray);
