@@ -101,7 +101,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="02_Introduction_to_Integer_Programming_files/libs/revealjs/dist/theme/quarto-753672de1c8d27367d7eb69cc52d6549.css">
+  <link rel="stylesheet" href="02_Introduction_to_Integer_Programming_files/libs/revealjs/dist/theme/quarto-9229e88d4c2a45e55d17f23c4f08bba8.css">
   <link href="02_Introduction_to_Integer_Programming_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="02_Introduction_to_Integer_Programming_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="02_Introduction_to_Integer_Programming_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -627,7 +627,29 @@
             enableSpeech: false,
             enableBraille: false,
             enableExplorer: false,
+            enableExplorerHelp: false,
             enableMenu: false,
+            // The five lines above are not enough on their own (round 147).
+            // The bundle's menu handler runs in its constructor whether or
+            // not enableMenu is set, and copies its own settings over these
+            // options: `enableExplorer = enableEnrichment = settings.enrich`,
+            // and enrich defaults to true in the vendored 4.1.3. So a click
+            // on an equation greyed it, put an info icon on its corner, and
+            // the icon opened "MathJax Expression Explorer Help" [observed by
+            // Sebastián while teaching, November 2026]. The settings below
+            // are the menu's own: enrich off keeps the explorer off,
+            // inTabOrder off leaves equations without a tabindex, so a click
+            // cannot focus one, and help off drops the icon.
+            menuOptions: {
+              settings: {
+                enrich: false,
+                speech: false,
+                braille: false,
+                collapsible: false,
+                inTabOrder: false,
+                help: false
+              }
+            },
             worker: {
               path: MATHJAX_DIR + "/sre",
               maps: MATHJAX_DIR + "/sre/mathmaps"
