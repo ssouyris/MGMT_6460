@@ -101,7 +101,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="04_LP_Duality_files/libs/revealjs/dist/theme/quarto-faef552f4ff37e02942beabbb2bea452.css">
+  <link rel="stylesheet" href="04_LP_Duality_files/libs/revealjs/dist/theme/quarto-f49a00981ecdd7d43064c61350de4e31.css">
   <link href="04_LP_Duality_files/libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="04_LP_Duality_files/libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="04_LP_Duality_files/libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -5172,8 +5172,12 @@ Gurobi attributes <code>Pi</code>, <code>RC</code>, <code>SARHSLow</code>, <code
          overview, while the board or pen is up, when it ends a drag of more
          than 5px, or when it leaves a text selection.
 
+         The same file removes the browser's tooltips: see NO TOOLTIPS in the
+         script. A tooltip and the dot are one problem, what shows at the
+         pointer while presenting.
+
          Delete this file and drop it from `include-after-body` to remove
-         the dot; nothing else depends on it.
+         the dot and bring the tooltips back; nothing else depends on it.
          ============================================================ -->
 
     <style>
@@ -5278,7 +5282,52 @@ Gurobi attributes <code>Pi</code>, <code>RC</code>, <code>SARHSLow</code>, <code
         toggle();
       }
 
+      // NO TOOLTIPS. A `title` attribute makes the browser show its text in a
+      // grey box under a resting pointer, and with the remote in pointer mode
+      // the pointer rests on the slide. Quarto writes one on every callout
+      // title, as raw source ("Service time $T$" under a typeset T), and on
+      // every code block's Copy to Clipboard button; the board's bin button
+      // has one too [counted 2026-11-09 in gallery.html: 63 copy buttons, 12
+      // callouts]. Each attribute is removed at load and as nodes are added
+      // (OJS cells, the menu and the board build theirs late). Where the
+      // element has no text of its own, the title moves to aria-label first,
+      // so a screen reader still names the button. SVG <title> children
+      // (Plot's `title` channel, mermaid) are native tooltips as well and go
+      // the same way. Plot's `tip: true` is drawn by Plot, not the browser,
+      // and stays.
+      function untitle(root) {
+        if (root.nodeType !== 1) return;
+        var els = root.querySelectorAll('[title], svg title');
+        var list = [root].concat(Array.prototype.slice.call(els));
+        list.forEach(function (el) {
+          if (el.namespaceURI === 'http://www.w3.org/2000/svg' &&
+              el.localName === 'title') {
+            el.remove();
+            return;
+          }
+          if (!el.hasAttribute || !el.hasAttribute('title')) return;
+          var t = el.getAttribute('title');
+          if (t && !el.hasAttribute('aria-label') && !el.textContent.trim())
+            el.setAttribute('aria-label', t);
+          el.removeAttribute('title');
+        });
+      }
+
+      function noTooltips() {
+        untitle(document.body);
+        new MutationObserver(function (records) {
+          records.forEach(function (r) {
+            if (r.type === 'attributes') untitle(r.target);
+            else r.addedNodes.forEach(untitle);
+          });
+        }).observe(document.body, {
+          subtree: true, childList: true,
+          attributes: true, attributeFilter: ['title']
+        });
+      }
+
       function boot() {
+        noTooltips();
         if (!window.Reveal) return;
         dot = document.createElement('div');
         dot.id = 'rpi-laser';
